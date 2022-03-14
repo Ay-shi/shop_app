@@ -23,8 +23,9 @@ class ProductItem extends StatelessWidget {
             selectedProduct.imageUrl,
             fit: BoxFit.cover,
           ),
-          onTap: () =>
-              Navigator.of(context).pushNamed(ProductDetailScreen.routeName),
+          onTap: () => Navigator.of(context).pushNamed(
+              ProductDetailScreen.routeName,
+              arguments: selectedProduct.id),
         ),
         footer: GridTileBar(
             backgroundColor: Colors.black87,
