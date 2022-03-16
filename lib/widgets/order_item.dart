@@ -12,7 +12,7 @@ class OrderItem extends StatelessWidget {
         child: ListTile(
       title: Text("\$${order.amount}"),
       subtitle: Text(
-        (DateFormat.yMMMEd(order.date).toString()),
+        ("${DateFormat.yMMMEd().format(order.date)}"),
       ),
       trailing: IconButton(
         icon: Icon(Icons.add),
