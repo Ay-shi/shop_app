@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/product.dart';
 
@@ -48,6 +47,13 @@ class _EditProductState extends State<EditProduct> {
 
   void _updateImg() {
     if (!_imgFocusNode.hasFocus) {
+      if (!(_imageUrlController.text.startsWith("http") ||
+          (_imageUrlController.text.startsWith("https")))) return;
+      //     ||
+      // (!(_imageUrlController.text.endsWith(".png") ||
+      //     (_imageUrlController.text.endsWith(".jpeg")) ||
+      //     _imageUrlController.text.endsWith(".jpg")))) return;
+
       setState(() {});
     }
   }
@@ -112,6 +118,16 @@ class _EditProductState extends State<EditProduct> {
                     onSaved: (val) {
                       ps.price != val;
                     },
+                    validator: (value) {
+                      if (value!.isEmpty) return "Enter a price";
+                      if (double.tryParse(value) == null) {
+                        return "Enter a valid input";
+                      }
+                      if (double.parse(value) <= 0)
+                        return "Enter a velue greater then 0";
+
+                      return null;
+                    },
                   ),
                   TextFormField(
                     focusNode: _descriptionFocusNode,
@@ -120,6 +136,12 @@ class _EditProductState extends State<EditProduct> {
                     decoration: InputDecoration(labelText: 'Description'),
                     onSaved: (val) {
                       ps.description != val;
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) return "Enter a description";
+                      if (value.length <= 10)
+                        return "Enter a descprition with more than 10 characters";
+                      return null;
                     },
                   ),
                   SizedBox(
@@ -158,6 +180,17 @@ class _EditProductState extends State<EditProduct> {
                           },
                           onFieldSubmitted: (_) {
                             return _saveForm();
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) return "Enter th url";
+                            if (!(value.startsWith("http") ||
+                                (value.startsWith("https"))))
+                              return "Enter a valid URL";
+                            // if (!(value.endsWith(".png") ||
+                            //     (value.endsWith(".jpeg")) ||
+                            //     value.endsWith(".jpg")))
+                            //   return "Enter a valid URL";
+                            return null;
                           },
                         ),
                       ),
