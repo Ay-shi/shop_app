@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/product.dart';
+import '../providers/products.dart';
+import 'package:provider/provider.dart';
 
 class EditProduct extends StatefulWidget {
   //const EditProduct({ Key? key }) : super(key: key);
@@ -39,7 +41,7 @@ class _EditProductState extends State<EditProduct> {
       _updateImg;
     });
     _imageUrlController.dispose();
-    _imageUrlController.dispose();
+
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
     super.dispose();
@@ -58,19 +60,24 @@ class _EditProductState extends State<EditProduct> {
     }
   }
 
-  void _saveForm() {
-    _form.currentState!.validate();
-    _form.currentState!.save();
-    prod = Product(
-        id: "",
-        title: ps.title,
-        description: ps.description,
-        imageUrl: ps.imageUrl,
-        price: ps.price);
-  }
-
   @override
   Widget build(BuildContext context) {
+    void _saveForm() {
+      var isvalid = _form.currentState!.validate();
+      if (isvalid == false) return;
+      _form.currentState!.save();
+      print(ps.imageUrl);
+      prod = Product(
+          id: "",
+          title: ps.title,
+          description: ps.description,
+          imageUrl: ps.imageUrl,
+          price: ps.price);
+
+      Provider.of<Products>(context, listen: false).addProduct(prod!);
+      Navigator.of(context).pop();
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Product"),
@@ -96,7 +103,7 @@ class _EditProductState extends State<EditProduct> {
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(labelText: "Title"),
                     onSaved: (val) {
-                      ps.title != val;
+                      ps.title = val!;
                     },
                     validator: (value) {
                       if (value!.isEmpty) {
@@ -116,7 +123,7 @@ class _EditProductState extends State<EditProduct> {
                     decoration: InputDecoration(labelText: "Price"),
                     keyboardType: TextInputType.number,
                     onSaved: (val) {
-                      ps.price != val;
+                      ps.price = double.parse(val!);
                     },
                     validator: (value) {
                       if (value!.isEmpty) return "Enter a price";
@@ -135,7 +142,7 @@ class _EditProductState extends State<EditProduct> {
                     maxLines: 3,
                     decoration: InputDecoration(labelText: 'Description'),
                     onSaved: (val) {
-                      ps.description != val;
+                      ps.description = val!;
                     },
                     validator: (value) {
                       if (value!.isEmpty) return "Enter a description";
