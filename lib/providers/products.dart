@@ -84,4 +84,9 @@ class Products with ChangeNotifier {
         imageUrl: prod.imageUrl);
     notifyListeners();
   }
+
+  void deleteProd(String prodId) {
+    _items.removeWhere((element) => element.id == prodId);
+    notifyListeners();
+  }
 }

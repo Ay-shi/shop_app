@@ -42,6 +42,7 @@ class UserProdutsScreen extends StatelessWidget {
               productid: productData.items[i].id,
               title: productData.items[i].title,
               imageUrl: productData.items[i].imageUrl,
+              deleteHandler: productData.deleteProd,
             );
           },
           itemCount: productData.items.length,

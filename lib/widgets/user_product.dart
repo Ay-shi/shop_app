@@ -3,11 +3,15 @@ import '../screens/edit_product_screen.dart';
 
 class UserProduct extends StatelessWidget {
   // const UserProduct({ Key? key }) : super(key: key);
+  Function deleteHandler;
   final productid;
   final title;
   final imageUrl;
   UserProduct(
-      {required this.title, required this.imageUrl, required this.productid});
+      {required this.title,
+      required this.imageUrl,
+      required this.productid,
+      required this.deleteHandler});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,11 @@ class UserProduct extends StatelessWidget {
                       .pushNamed(EditProduct.routename, arguments: productid);
                 },
                 icon: Icon(Icons.edit)),
-            IconButton(onPressed: () {}, icon: Icon(Icons.delete)),
+            IconButton(
+                onPressed: () {
+                  deleteHandler(productid);
+                },
+                icon: Icon(Icons.delete)),
           ],
         ),
       ),
