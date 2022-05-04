@@ -12,11 +12,12 @@ class EditProduct extends StatefulWidget {
 }
 
 class ProductSample {
-  //String id = "";
+  String id = "";
   String title = "";
   double price = 0;
   String description = "";
   String imageUrl = "";
+  bool isFavourite = false;
 }
 
 class _EditProductState extends State<EditProduct> {
@@ -27,12 +28,32 @@ class _EditProductState extends State<EditProduct> {
   final _form = GlobalKey<FormState>();
   var ps = ProductSample();
   Product? prod;
+  bool _init = true;
 
   @override
   void initState() {
     // TODO: implement initState
     _imgFocusNode.addListener(_updateImg);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+    if (_init) {
+      final id = ModalRoute.of(context)!.settings.arguments.toString();
+      if (id != null) {
+        prod = Provider.of<Products>(context, listen: false).findProd(id);
+        ps.title = prod!.title;
+        ps.price = prod!.price;
+        ps.description = prod!.description;
+        ps.id = prod!.id;
+        ps.isFavourite = prod!.isFavourite;
+      }
+      _imageUrlController.text = prod!.imageUrl;
+    }
+    _init = false;
   }
 
   @override
@@ -68,13 +89,17 @@ class _EditProductState extends State<EditProduct> {
       _form.currentState!.save();
       print(ps.imageUrl);
       prod = Product(
-          id: "",
+          id: ps.id,
           title: ps.title,
           description: ps.description,
           imageUrl: ps.imageUrl,
-          price: ps.price);
-
-      Provider.of<Products>(context, listen: false).addProduct(prod!);
+          price: ps.price,
+          isFavourite: ps.isFavourite);
+      if (ps.id == "")
+        Provider.of<Products>(context, listen: false).addProduct(prod!);
+      else {
+        Provider.of<Products>(context, listen: false).upateProduct(prod!);
+      }
       Navigator.of(context).pop();
     }
 
@@ -97,6 +122,7 @@ class _EditProductState extends State<EditProduct> {
               child: Column(
                 children: [
                   TextFormField(
+                    initialValue: prod!.title,
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_priceFocusNode);
                     },
@@ -114,6 +140,7 @@ class _EditProductState extends State<EditProduct> {
                     },
                   ),
                   TextFormField(
+                    initialValue: prod!.price.toString(),
                     onFieldSubmitted: (_) {
                       FocusScope.of(context)
                           .requestFocus(_descriptionFocusNode);
@@ -137,6 +164,7 @@ class _EditProductState extends State<EditProduct> {
                     },
                   ),
                   TextFormField(
+                    initialValue: prod!.description,
                     focusNode: _descriptionFocusNode,
                     keyboardType: TextInputType.multiline,
                     maxLines: 3,
