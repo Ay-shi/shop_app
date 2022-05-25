@@ -43,16 +43,27 @@ class _EditProductState extends State<EditProduct> {
     super.didChangeDependencies();
     if (_init) {
       final id = ModalRoute.of(context)!.settings.arguments.toString();
-      if (id != null) {
+      print(id);
+      if (id == "null") {
+        print("false");
+
+        // _init = false;
+        // return;
+      }
+      //ModalRoute.of(context)?.settings.arguments
+      if (id != "null") {
+        print("hello");
         prod = Provider.of<Products>(context, listen: false).findProd(id);
+        print("h");
         ps.title = prod!.title;
         ps.price = prod!.price;
         ps.description = prod!.description;
         ps.id = prod!.id;
         ps.isFavourite = prod!.isFavourite;
+        _imageUrlController.text = prod!.imageUrl;
       }
-      _imageUrlController.text = prod!.imageUrl;
     }
+    print("h2");
     _init = false;
   }
 
@@ -83,6 +94,7 @@ class _EditProductState extends State<EditProduct> {
 
   @override
   Widget build(BuildContext context) {
+    print("hello..");
     void _saveForm() {
       var isvalid = _form.currentState!.validate();
       if (isvalid == false) return;
@@ -95,13 +107,24 @@ class _EditProductState extends State<EditProduct> {
           imageUrl: ps.imageUrl,
           price: ps.price,
           isFavourite: ps.isFavourite);
-      if (ps.id == "")
+      if (ps.id == "") {
+        print("hehe");
         Provider.of<Products>(context, listen: false).addProduct(prod!);
-      else {
+        //print(Provider.of<Products>(context).items);
+      } else {
         Provider.of<Products>(context, listen: false).upateProduct(prod!);
       }
+      print("hilo");
       Navigator.of(context).pop();
     }
+
+    prod = Product(
+        id: ps.id,
+        title: ps.title,
+        description: ps.description,
+        imageUrl: ps.imageUrl,
+        price: ps.price,
+        isFavourite: ps.isFavourite);
 
     return Scaffold(
       appBar: AppBar(
