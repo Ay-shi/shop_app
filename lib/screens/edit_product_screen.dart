@@ -96,7 +96,7 @@ class _EditProductState extends State<EditProduct> {
   @override
   Widget build(BuildContext context) {
     //print("hello..");
-    void _saveForm() {
+    Future<void> _saveForm() async {
       var isvalid = _form.currentState!.validate();
       if (isvalid == false) return;
       _form.currentState!.save();
@@ -113,10 +113,10 @@ class _EditProductState extends State<EditProduct> {
       });
       if (ps.id == "") {
         //print("hehe");
-        Provider.of<Products>(context, listen: false)
-            .addProduct(prod!)
-            .catchError((eror) {
-          return showDialog<Null>(
+        try {
+          await Provider.of<Products>(context, listen: false).addProduct(prod!);
+        } catch (eror) {
+          await showDialog<Null>(
               context: context,
               builder: (ctx) {
                 return AlertDialog(
@@ -131,13 +131,13 @@ class _EditProductState extends State<EditProduct> {
                   ],
                 );
               });
-        }).then((_) {
+        } finally {
           print("heyy");
           setState(() {
             _isLoading = false;
           });
           Navigator.of(context).pop();
-        });
+        }
         //print(Provider.of<Products>(context).items);
       } else {
         Provider.of<Products>(context, listen: false).upateProduct(prod!);
@@ -160,7 +160,8 @@ class _EditProductState extends State<EditProduct> {
         actions: [
           IconButton(
               onPressed: () {
-                return _saveForm();
+                _saveForm();
+                return;
               },
               icon: const Icon(Icons.save))
         ],
@@ -270,7 +271,8 @@ class _EditProductState extends State<EditProduct> {
                                   ps.imageUrl = val!;
                                 },
                                 onFieldSubmitted: (_) {
-                                  return _saveForm();
+                                  _saveForm();
+                                  return;
                                 },
                                 validator: (value) {
                                   if (value!.isEmpty) return "Enter th url";
