@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/models/HttpException.dart';
 import 'product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -153,8 +154,31 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProd(String prodId) {
+  Future<void> deleteProd(String prodId) async {
+    final deletedIndex = _items.indexWhere((element) => element.id == prodId);
+    Product? deletedProduct = _items[deletedIndex];
     _items.removeWhere((element) => element.id == prodId);
     notifyListeners();
+    final url = Uri.https(
+        "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "/proucts/$prodId");
+    try {
+      final response = await http.delete(url);
+    } catch (_) {
+      print("error while deleting");
+      _items.insert(deletedIndex, deletedProduct!);
+      notifyListeners();
+
+      throw HttpException("an error occured while deleting");
+    }
+
+    // if (response.statusCode >= 400) {
+    //   print("error while deleting");
+    //   _items.insert(deletedIndex, deletedProduct!);
+    //   notifyListeners();
+
+    //   throw HttpException("an error occured while deleting");
+    // }
+    deletedProduct = null;
   }
 }

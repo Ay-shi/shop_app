@@ -15,6 +15,7 @@ class UserProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     return ListTile(
       leading: CircleAvatar(
         backgroundImage: NetworkImage(imageUrl),
@@ -33,7 +34,16 @@ class UserProduct extends StatelessWidget {
                 icon: Icon(Icons.edit)),
             IconButton(
                 onPressed: () {
-                  deleteHandler(productid);
+                  try {
+                    deleteHandler(productid);
+                  } catch (error) {
+                    print("object");
+                    scaffold.showSnackBar(SnackBar(
+                        content: Text(
+                      error.toString(),
+                      textAlign: TextAlign.center,
+                    )));
+                  }
                 },
                 icon: Icon(Icons.delete)),
           ],

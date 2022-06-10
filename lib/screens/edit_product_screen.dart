@@ -131,18 +131,23 @@ class _EditProductState extends State<EditProduct> {
                   ],
                 );
               });
-        } finally {
-          print("heyy");
-          setState(() {
-            _isLoading = false;
-          });
-          Navigator.of(context).pop();
         }
+        // finally {
+        //   print("heyy");
+        //   setState(() {
+        //     _isLoading = false;
+        //   });
+        //   Navigator.of(context).pop();
+        // }
         //print(Provider.of<Products>(context).items);
       } else {
-        Provider.of<Products>(context, listen: false).upateProduct(prod!);
-        Navigator.of(context).pop();
+        await Provider.of<Products>(context, listen: false).upateProduct(prod!);
+        // Navigator.of(context).pop();
       }
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
       //print("hilo");
     }
 
