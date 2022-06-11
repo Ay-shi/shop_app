@@ -39,14 +39,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   backgroundColor: Theme.of(context).primaryColor,
                 ),
-                TextButton(
-                    onPressed: () {
-                      final orders =
-                          Provider.of<Orders>(context, listen: false);
-                      orders.add(cartItems, cart.totalCost());
-                      cart.clearCart();
-                    },
-                    child: Text("ORDER NOW!"))
+                orderButton(cart: cart, cartItems: cartItems)
               ],
             ),
           )),
@@ -64,5 +57,48 @@ class CartScreen extends StatelessWidget {
             itemCount: cart.itemCount,
           ))
         ]));
+  }
+}
+
+class orderButton extends StatefulWidget {
+  const orderButton({
+    Key? key,
+    required this.cart,
+    required this.cartItems,
+  }) : super(key: key);
+
+  final Cart cart;
+  final List<CartItem> cartItems;
+
+  @override
+  State<orderButton> createState() => _orderButtonState();
+}
+
+class _orderButtonState extends State<orderButton> {
+  bool isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
+    return TextButton(
+        onPressed: widget.cart.totalCost() <= 0
+            ? null
+            : () async {
+                try {
+                  final orders = Provider.of<Orders>(context, listen: false);
+                  setState(() {
+                    isLoading = true;
+                  });
+                  await orders.add(widget.cartItems, widget.cart.totalCost());
+                  setState(() {
+                    isLoading = false;
+                  });
+                  widget.cart.clearCart();
+                } catch (error) {
+                  scaffold.showSnackBar(SnackBar(
+                      content: Text("error occured while placing order")));
+                }
+              },
+        child: isLoading ? CircularProgressIndicator() : Text("ORDER NOW!"));
   }
 }
