@@ -108,7 +108,7 @@ class Products with ChangeNotifier {
           }));
       // .then((response) {
       Product p = Product(
-          id: json.decode(response.body)['title'].toString(),
+          id: json.decode(response.body)['name'].toString(),
           title: prod.title,
           description: prod.description,
           imageUrl: prod.imageUrl,

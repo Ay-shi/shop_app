@@ -25,7 +25,7 @@ class Product with ChangeNotifier {
     isFavourite = !isFavourite;
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts/${id}");
+        "/proucts/${id}.json");
     try {
       final response =
           await http.patch(url, body: jsonEncode({"isFavourite": isFavourite}));
