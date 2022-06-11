@@ -13,6 +13,7 @@ class ProductItem extends StatelessWidget {
   // ProductItem({required this.id, required this.title, required this.imageUrl});
   @override
   Widget build(BuildContext context) {
+    final scaffold = ScaffoldMessenger.of(context);
     final selectedProduct = Provider.of<Product>(context, listen: false);
 
     return ClipRRect(
@@ -41,8 +42,18 @@ class ProductItem extends StatelessWidget {
                       : Icons.favorite_outline_outlined,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
-                onPressed: () {
-                  selectedProduct.toggleFvourite();
+                onPressed: () async {
+                  try {
+                    final response = await selectedProduct.toggleFvourite();
+                  } catch (error) {
+                    print("eroor thron");
+                    scaffold.showSnackBar(SnackBar(
+                        content: Text(
+                      "Error occured while changing status",
+                      textAlign: TextAlign.center,
+                    )));
+                  }
+                  ;
                 },
               ),
             ),

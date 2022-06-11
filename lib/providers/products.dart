@@ -161,7 +161,7 @@ class Products with ChangeNotifier {
     notifyListeners();
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts/$prodId");
+        "/proucts/$prodId.json");
     try {
       final response = await http.delete(url);
     } catch (_) {
