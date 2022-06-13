@@ -23,6 +23,35 @@ class Orders with ChangeNotifier {
     return [..._orders];
   }
 
+  Future<void> fetchAndSet() async {
+    final url = Uri.https(
+        "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
+        "/orders.json");
+    try {
+      final response = await http.get(url);
+      final loadedOrder = jsonDecode(response.body) as Map<String, dynamic>;
+      if (loadedOrder.isEmpty || loadedOrder == null) return;
+      List<OrderItem> _loadedOrders = [];
+      loadedOrder.forEach((orderId, orderData) {
+        _loadedOrders.add(OrderItem(
+            id: orderId,
+            date: DateTime.parse(orderData["date"]),
+            products: (orderData["products"] as List<dynamic>)
+                .map((order) => CartItem(
+                    title: order["title"],
+                    id: order["id"],
+                    price: order["price"],
+                    quantity: order["quantity"]))
+                .toList(),
+            amount: orderData["amount"]));
+      });
+      _orders = _loadedOrders;
+      notifyListeners();
+    } catch (error) {
+      print("error while loading orders");
+    }
+  }
+
   Future<void> add(List<CartItem> olist, double oamount) async {
     DateTime timestamp = DateTime.now();
     final url = Uri.https(
@@ -32,7 +61,7 @@ class Orders with ChangeNotifier {
       final response = await http.post(url,
           body: jsonEncode({
             "date": timestamp.toIso8601String(),
-            "proucts": olist
+            "products": olist
                 .map((e) => {
                       "title": e.title,
                       "id": e.id,
@@ -40,7 +69,7 @@ class Orders with ChangeNotifier {
                       "price": e.price
                     })
                 .toList(),
-            "amuount": oamount
+            "amount": oamount
           }));
       _orders.insert(
           0,
