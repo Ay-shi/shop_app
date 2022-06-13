@@ -9,6 +9,7 @@ import './providers/orders.dart';
 import './providers/products.dart';
 import './screens/orders_screen.dart';
 import './screens/edit_product_screen.dart';
+import './screens/auth_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -27,16 +28,17 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.teal,
             appBarTheme: AppBarTheme(color: Colors.deepPurpleAccent),
             scaffoldBackgroundColor: Colors.teal,
-            colorScheme: ColorScheme.fromSwatch()
-                .copyWith(secondary: Colors.deepPurpleAccent),
+            colorScheme: ColorScheme.fromSwatch().copyWith(
+                secondary: Colors.deepPurpleAccent, tertiary: Colors.white),
             fontFamily: 'Lato'),
-        home: ProductOverview(),
+        home: AuthScreen(),
         routes: {
           UserProdutsScreen.routename: (ctx) => UserProdutsScreen(),
           CartScreen.routename: (ctx) => CartScreen(),
           ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
           OrdersScreen.namedRoute: (ctx) => OrdersScreen(),
-          EditProduct.routename: (ctx) => EditProduct()
+          EditProduct.routename: (ctx) => EditProduct(),
+          ProductOverview.routename: (ctx) => ProductOverview(),
         },
       ),
     );
