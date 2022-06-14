@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/models/HttpException.dart';
 import "../providers/auth.dart";
 
 enum AuthMode { Signup, Login }
@@ -102,6 +103,20 @@ class _AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void showErrorDialog(String error) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text("An error occured!"),
+        content: Text(error),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(), child: Text("Okay"))
+        ],
+      ),
+    );
+  }
+
   Future<void> _submit() async {
     if (_formKey.currentState == null) {
       print("error in formState");
@@ -111,16 +126,45 @@ class _AuthCardState extends State<AuthCard> {
       // Invalid!
       return;
     }
-    _formKey.currentState!.save();
-    setState(() {
-      _isLoading = true;
-    });
-    if (_authMode == AuthMode.Login) {
-      await Provider.of<Auth>(context, listen: false)
-          .signIn(_authData["email"]!, _authData["password"]!);
-    } else {
-      await Provider.of<Auth>(context, listen: false).signUp(
-          _authData["email"]!, _authData["password"]!); //listen false imp
+    try {
+      _formKey.currentState!.save();
+      setState(() {
+        print("hello loading");
+        _isLoading = true;
+      });
+
+      if (_authMode == AuthMode.Login) {
+        await Provider.of<Auth>(context, listen: false)
+            .signIn(_authData["email"]!, _authData["password"]!);
+      } else {
+        await Provider.of<Auth>(context, listen: false).signUp(
+            _authData["email"]!, _authData["password"]!); //listen false imp
+      }
+      // setState(() {
+      //   _isLoading = false;
+      // });
+    } on HttpException catch (error) {
+      print("error catch");
+      String errorMessage = error.toString();
+      if (errorMessage.contains("EMAIL_EXISTS"))
+        errorMessage = "The email-id has already been registered";
+      if (errorMessage.contains("OPERATION_NOT_ALLOWED:"))
+        errorMessage = "password sign-in is disaled";
+      if (errorMessage.contains("TOO_MANY_ATTEMPTS_TRY_LATER"))
+        errorMessage =
+            "We have blocked all requests from this device due to unusual activity. Try again later.";
+      if (errorMessage.contains("EMAIL_NOT_FOUND"))
+        errorMessage =
+            "There is no user record corresponding to this identifier. The user may have been deleted.";
+      if (errorMessage.contains("INVALID_PASSWORD"))
+        errorMessage =
+            "The password is invalid or the user does not have a password.";
+      if (errorMessage.contains("USER_DISABLED"))
+        errorMessage =
+            "The user account has been disabled by an administrator.";
+      showErrorDialog(errorMessage);
+    } catch (error) {
+      showErrorDialog("authentication failed");
     }
     setState(() {
       _isLoading = false;
@@ -165,7 +209,6 @@ class _AuthCardState extends State<AuthCard> {
                     if (value == null || !value.contains('@')) {
                       return 'Invalid email!';
                     }
-                    return null;
                     return null;
                   },
                   onSaved: (value) {
