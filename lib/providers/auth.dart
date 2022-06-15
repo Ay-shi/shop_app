@@ -21,11 +21,13 @@ class Auth with ChangeNotifier {
             "returnSecureToken": true,
           }));
       final res = jsonDecode(response.body);
+      print(res["error"]["message"]);
       if (res["error"] != null) {
+        print("throw error");
         throw HttpException(res["error"]["message"]);
       }
     } catch (error) {
-      throw error;
+      throw HttpException(error.toString());
     }
   }
 

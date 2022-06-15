@@ -126,13 +126,13 @@ class _AuthCardState extends State<AuthCard> {
       // Invalid!
       return;
     }
-    try {
-      _formKey.currentState!.save();
-      setState(() {
-        print("hello loading");
-        _isLoading = true;
-      });
+    _formKey.currentState!.save();
+    setState(() {
+      print("hello loading");
+      _isLoading = true;
+    });
 
+    try {
       if (_authMode == AuthMode.Login) {
         await Provider.of<Auth>(context, listen: false)
             .signIn(_authData["email"]!, _authData["password"]!);
@@ -140,9 +140,6 @@ class _AuthCardState extends State<AuthCard> {
         await Provider.of<Auth>(context, listen: false).signUp(
             _authData["email"]!, _authData["password"]!); //listen false imp
       }
-      // setState(() {
-      //   _isLoading = false;
-      // });
     } on HttpException catch (error) {
       print("error catch");
       String errorMessage = error.toString();
@@ -164,6 +161,7 @@ class _AuthCardState extends State<AuthCard> {
             "The user account has been disabled by an administrator.";
       showErrorDialog(errorMessage);
     } catch (error) {
+      print("roor catch");
       showErrorDialog("authentication failed");
     }
     setState(() {
