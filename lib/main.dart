@@ -18,31 +18,53 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider.value(value: Auth()),
-        ChangeNotifierProvider(create: (context) => Products()),
-        ChangeNotifierProvider(create: (context) => Cart()),
-        ChangeNotifierProvider(create: (context) => Orders())
-      ],
-      child: MaterialApp(
-        title: 'MyShop',
-        theme: ThemeData(
-            primarySwatch: Colors.teal,
-            appBarTheme: AppBarTheme(color: Colors.deepPurpleAccent),
-            scaffoldBackgroundColor: Colors.teal,
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-                secondary: Colors.deepPurpleAccent, tertiary: Colors.white),
-            fontFamily: 'Lato'),
-        home: AuthScreen(),
-        routes: {
-          UserProdutsScreen.routename: (ctx) => UserProdutsScreen(),
-          CartScreen.routename: (ctx) => CartScreen(),
-          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-          OrdersScreen.namedRoute: (ctx) => OrdersScreen(),
-          EditProduct.routename: (ctx) => EditProduct(),
-          ProductOverview.routename: (ctx) => ProductOverview(),
-        },
-      ),
-    );
+        providers: [
+          ChangeNotifierProvider.value(value: Auth()),
+          ChangeNotifierProvider(create: (context) => Products()),
+          ChangeNotifierProvider(create: (context) => Cart()),
+          ChangeNotifierProvider(create: (context) => Orders())
+        ],
+        child: Consumer<Auth>(
+            builder: (ctx, auth, _) => MaterialApp(
+                  title: 'MyShop',
+                  theme: ThemeData(
+                      primarySwatch: Colors.teal,
+                      appBarTheme: AppBarTheme(color: Colors.deepPurpleAccent),
+                      scaffoldBackgroundColor: Colors.teal,
+                      colorScheme: ColorScheme.fromSwatch().copyWith(
+                          secondary: Colors.deepPurpleAccent,
+                          tertiary: Colors.white),
+                      fontFamily: 'Lato'),
+                  home: auth.isAuth ? ProductOverview() : AuthScreen(),
+                  routes: {
+                    UserProdutsScreen.routename: (ctx) => UserProdutsScreen(),
+                    CartScreen.routename: (ctx) => CartScreen(),
+                    ProductDetailScreen.routeName: (ctx) =>
+                        ProductDetailScreen(),
+                    OrdersScreen.namedRoute: (ctx) => OrdersScreen(),
+                    EditProduct.routename: (ctx) => EditProduct(),
+                    ProductOverview.routename: (ctx) => ProductOverview(),
+                  },
+                ))
+        // MaterialApp(
+        //   title: 'MyShop',
+        //   theme: ThemeData(
+        //       primarySwatch: Colors.teal,
+        //       appBarTheme: AppBarTheme(color: Colors.deepPurpleAccent),
+        //       scaffoldBackgroundColor: Colors.teal,
+        //       colorScheme: ColorScheme.fromSwatch().copyWith(
+        //           secondary: Colors.deepPurpleAccent, tertiary: Colors.white),
+        //       fontFamily: 'Lato'),
+        //   home: AuthScreen(),
+        //   routes: {
+        //     UserProdutsScreen.routename: (ctx) => UserProdutsScreen(),
+        //     CartScreen.routename: (ctx) => CartScreen(),
+        //     ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+        //     OrdersScreen.namedRoute: (ctx) => OrdersScreen(),
+        //     EditProduct.routename: (ctx) => EditProduct(),
+        //     ProductOverview.routename: (ctx) => ProductOverview(),
+        //   },
+        // ),
+        );
   }
 }
