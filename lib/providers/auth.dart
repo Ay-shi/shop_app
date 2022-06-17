@@ -21,21 +21,23 @@ class Auth with ChangeNotifier {
             "returnSecureToken": true,
           }));
       final res = jsonDecode(response.body);
-      print(res["error"]["message"]);
+      // print(res["error"]["message"]);
       if (res["error"] != null) {
         print("throw error");
         throw HttpException(res["error"]["message"]);
       }
     } catch (error) {
-      throw HttpException(error.toString());
+      print("throw error 2");
+      print(error);
+      throw error;
     }
   }
 
   Future<void> signUp(String emailId, String password) async {
-    authenticate(emailId, password, "signUp");
+    return authenticate(emailId, password, "signUp");
   }
 
   Future<void> signIn(String emailId, String password) async {
-    authenticate(emailId, password, "signInWithPassword");
+    return authenticate(emailId, password, "signInWithPassword");
   }
 }

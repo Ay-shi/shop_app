@@ -161,7 +161,7 @@ class _AuthCardState extends State<AuthCard> {
             "The user account has been disabled by an administrator.";
       showErrorDialog(errorMessage);
     } catch (error) {
-      print("roor catch");
+      print(error);
       showErrorDialog("authentication failed");
     }
     setState(() {
