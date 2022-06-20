@@ -6,6 +6,9 @@ import 'dart:convert';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
+  final AuthToken;
+
+  Products(this._items, this.AuthToken);
   //   Product(
   //     id: 'p1',
   //     title: 'Red Shirt',
@@ -68,7 +71,8 @@ class Products with ChangeNotifier {
   Future<void> fetchAndSetProducts() async {
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts.json");
+        "/proucts.json",
+        {"auth": "$AuthToken"});
     try {
       final response = await http.get(url);
       print(jsonDecode(response.body));
@@ -95,7 +99,8 @@ class Products with ChangeNotifier {
   Future<void> addProduct(Product prod) async {
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts.json");
+        "/proucts.json",
+        {"auth": "$AuthToken"});
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -130,7 +135,8 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((element) => prod.id == element.id);
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts/${prod.id}.json");
+        "/proucts/${prod.id}.json",
+        {"auth": "$AuthToken"});
     try {
       await http.patch(url,
           body: jsonEncode({
@@ -161,7 +167,8 @@ class Products with ChangeNotifier {
     notifyListeners();
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts/$prodId.json");
+        "/proucts/$prodId.json",
+        {"auth": "$AuthToken"});
     try {
       final response = await http.delete(url);
     } catch (_) {

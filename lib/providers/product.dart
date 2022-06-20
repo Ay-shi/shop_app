@@ -20,12 +20,13 @@ class Product with ChangeNotifier {
       required this.price,
       this.isFavourite = false});
 
-  Future<void> toggleFvourite() async {
+  Future<void> toggleFvourite(String? authToken) async {
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
-        "/proucts/${id}.json");
+        "/proucts/${id}.json",
+        {"auth": "$authToken"});
     try {
       final response =
           await http.patch(url, body: jsonEncode({"isFavourite": isFavourite}));
