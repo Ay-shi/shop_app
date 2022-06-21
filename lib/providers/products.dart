@@ -69,11 +69,18 @@ class Products with ChangeNotifier {
     return items.firstWhere((element) => element.id == id);
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool? isSorted = false]) async {
+    var _parameters = isSorted == true
+        ? {
+            "auth": "$authToken",
+            "orderBy": jsonEncode("creatorId"),
+            "equalTo": jsonEncode("$userId")
+          }
+        : {"auth": "$authToken"};
     var url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
         "/proucts.json",
-        {"auth": "$authToken"});
+        _parameters);
     try {
       final response = await http.get(url);
       print(jsonDecode(response.body));
@@ -119,7 +126,7 @@ class Products with ChangeNotifier {
             'price': prod.price,
             'imageUrl': prod.imageUrl,
             'description': prod.description,
-            "userId": userId
+            "creatorId": userId
             // 'isFavourite': prod.isFavourite
           }));
       // .then((response) {
