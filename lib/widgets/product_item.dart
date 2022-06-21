@@ -46,8 +46,8 @@ class ProductItem extends StatelessWidget {
                 ),
                 onPressed: () async {
                   try {
-                    final response =
-                        await selectedProduct.toggleFvourite(auth.token);
+                    final response = await selectedProduct.toggleFvourite(
+                        auth.token, auth.getUserId()!);
                   } catch (error) {
                     print("eroor thron");
                     scaffold.showSnackBar(SnackBar(

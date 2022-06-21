@@ -23,8 +23,9 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProxyProvider<Auth, Products>(
               update: (context, auth, previousProduct) => Products(
                   previousProduct == null ? [] : previousProduct.items,
-                  auth.token),
-              create: (context) => Products([], null)),
+                  auth.token,
+                  auth.getUserId()),
+              create: (context) => Products([], null, null)),
           ChangeNotifierProvider(create: (context) => Cart()),
           ChangeNotifierProxyProvider<Auth, Orders>(
               update: (context, auth, previous) =>
@@ -35,11 +36,11 @@ class MyApp extends StatelessWidget {
             builder: (ctx, auth, _) => MaterialApp(
                   title: 'MyShop',
                   theme: ThemeData(
-                      primarySwatch: Colors.teal,
-                      appBarTheme: AppBarTheme(color: Colors.deepPurpleAccent),
-                      scaffoldBackgroundColor: Colors.teal,
+                      primarySwatch: Colors.pink,
+                      appBarTheme: AppBarTheme(color: Colors.pinkAccent),
+                      //scaffoldBackgroundColor: Colors.teal,
                       colorScheme: ColorScheme.fromSwatch().copyWith(
-                          secondary: Colors.deepPurpleAccent,
+                          secondary: Color.fromARGB(255, 240, 194, 95),
                           tertiary: Colors.white),
                       fontFamily: 'Lato'),
                   home: auth.isAuth ? ProductOverview() : AuthScreen(),

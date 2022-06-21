@@ -6,9 +6,10 @@ import 'dart:convert';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
-  final AuthToken;
+  final authToken;
+  final userId;
 
-  Products(this._items, this.AuthToken);
+  Products(this._items, this.authToken, this.userId);
   //   Product(
   //     id: 'p1',
   //     title: 'Red Shirt',
@@ -69,15 +70,22 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.https(
+    var url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
         "/proucts.json",
-        {"auth": "$AuthToken"});
+        {"auth": "$authToken"});
     try {
       final response = await http.get(url);
       print(jsonDecode(response.body));
       final loadedData = json.decode(response.body) as Map<String, dynamic>;
+
       List<Product> _loadedProducts = [];
+      url = Uri.https(
+          "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
+          "/favourites/$userId.json",
+          {"auth": "$authToken"});
+      var res = await http.get(url);
+      final favouritestatus = json.decode(res.body);
       loadedData.forEach((productId, product) {
         _loadedProducts.add(Product(
             id: productId,
@@ -85,7 +93,9 @@ class Products with ChangeNotifier {
             description: product['description'],
             imageUrl: product['imageUrl'],
             price: product['price'].toDouble(),
-            isFavourite: product['isFavourite']));
+            isFavourite: favouritestatus == null
+                ? false
+                : favouritestatus['$productId'] ?? false));
         print(_loadedProducts);
       });
       _items = _loadedProducts;
@@ -100,7 +110,7 @@ class Products with ChangeNotifier {
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
         "/proucts.json",
-        {"auth": "$AuthToken"});
+        {"auth": "$authToken"});
     try {
       final response = await http.post(url,
           body: json.encode({
@@ -109,7 +119,8 @@ class Products with ChangeNotifier {
             'price': prod.price,
             'imageUrl': prod.imageUrl,
             'description': prod.description,
-            'isFavourite': prod.isFavourite
+            "userId": userId
+            // 'isFavourite': prod.isFavourite
           }));
       // .then((response) {
       Product p = Product(
@@ -136,7 +147,7 @@ class Products with ChangeNotifier {
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
         "/proucts/${prod.id}.json",
-        {"auth": "$AuthToken"});
+        {"auth": "$authToken"});
     try {
       await http.patch(url,
           body: jsonEncode({
@@ -168,7 +179,7 @@ class Products with ChangeNotifier {
     final url = Uri.https(
         "shop-app-91dcd-default-rtdb.asia-southeast1.firebasedatabase.app",
         "/proucts/$prodId.json",
-        {"auth": "$AuthToken"});
+        {"auth": "$authToken"});
     try {
       final response = await http.delete(url);
     } catch (_) {
